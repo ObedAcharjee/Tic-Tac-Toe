@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe - Start Game</title>
+    <style>
+        html, body {
+            height: 100vh;
+            overflow: hidden; /* Prevent scrolling */
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0;
+            background-image: url(kimi\ no\ na\ wa.png);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .container {
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: whitesmoke;
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        @media (hover: none) and (max-width: 768px) {
+            body {
+                background-attachment: fixed;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-image: url(spideys.jpg);
+                background-size: cover;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tic Tac Toe</h1>
+        <input type="text" id="player1" placeholder="Enter Player 1 (X) Name" required>
+        <input type="text" id="player2" placeholder="Enter Player 2 (O) Name" required>
+        <button onclick="startGame()">Let's Play!</button>
+    </div>
+
+    <script>
+        function startGame() {
+            const player1 = document.getElementById('player1').value.trim();
+            const player2 = document.getElementById('player2').value.trim();
+
+            if (!player1 || !player2) {
+                alert("Please enter usernames for both players!");
+                return;
+            }
+
+            // Store usernames in localStorage to pass to the next page
+            localStorage.setItem('player1', player1);
+            localStorage.setItem('player2', player2);
+
+            // Redirect to the game page
+            window.location.href = 'tic tac toe.html';
+        }
+    </script>
+</body>
+</html>

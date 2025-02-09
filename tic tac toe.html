@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe - Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            background-image: url(kimi%20no%20na%20wa.png);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            justify-content: flex-start;
+            padding-top: 20px;
+        }
+
+        html, body {
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        @media (hover: none) and (max-width: 768px) {
+            body {
+                background-image: url(spideys.jpg);
+                background-attachment: fixed;
+                background-position: center;
+                background-size: cover;
+            }
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 10px;
+            color: whitesmoke;
+        }
+
+        h1 {
+            font-size: 32px;
+            text-shadow: 2px 2px 4px black;
+        }
+
+        .status {
+            font-size: 24px;
+            margin: 10px 0;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px black;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 10px;
+            margin: 10px auto;
+            background-color: #333;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            border: 3px solid black;
+            font-size: 40px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .x-mark {
+            color: red;
+        }
+
+        .o-mark {
+            color: blue;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .winner {
+            font-size: 28px;
+            font-weight: bold;
+            color: gold;
+            text-shadow: 2px 2px 4px black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .crown {
+            width: 30px;
+            height: 30px;
+        }
+
+        .hidden {
+            display: none;
+            background-color: #4CAF50;
+        }
+
+        .crown {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tic Tac Toe</h1>
+        <div class="status" id="status"></div>
+        <div class="board" id="board">
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+        </div>
+        <button id="restartButton">Restart Game</button>
+        <button id="homeButton" class="hidden">Back to Home</button>
+    </div>
+
+    <script>
+        const player1 = localStorage.getItem('player1') || 'Player 1';
+        const player2 = localStorage.getItem('player2') || 'Player 2';
+        const board = document.getElementById('board');
+        const cells = document.querySelectorAll('[data-cell]');
+        const status = document.getElementById('status');
+        const restartButton = document.getElementById('restartButton');
+        const homeButton = document.getElementById('homeButton');
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let gameState = ['', '', '', '', '', '', '', '', ''];
+
+        const winningCombinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        status.textContent = `${player1}'s turn (X)`;
+
+        function handleCellClick(e) {
+            const cell = e.target;
+            const cellIndex = Array.from(cells).indexOf(cell);
+            if (gameState[cellIndex] !== '' || !gameActive) return;
+
+            gameState[cellIndex] = currentPlayer;
+            cell.textContent = currentPlayer;
+            cell.classList.add(currentPlayer === 'X' ? 'x-mark' : 'o-mark');
+
+            if (checkWin()) {
+                showWinner();
+                return;
+            }
+
+            if (checkDraw()) {
+                status.textContent = "Game ended in a draw!";
+                gameActive = false;
+                homeButton.classList.remove('hidden');
+                return;
+            }
+
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            status.textContent = `${currentPlayer === 'X' ? player1 : player2}'s turn (${currentPlayer})`;
+        }
+
+        function checkWin() {
+            return winningCombinations.some(combination =>
+                combination.every(index => gameState[index] === currentPlayer)
+            );
+        }
+
+        function checkDraw() {
+            return gameState.every(cell => cell !== '');
+        }
+
+        function showWinner() {
+            status.innerHTML = `<span class="winner">${currentPlayer === 'X' ? player1 : player2} Wins! <img src="Crown-PNG.png" class="crown"></span>`;
+            gameActive = false;
+            homeButton.classList.remove('hidden');
+        }
+
+        function restartGame() {
+            gameState.fill('');
+            gameActive = true;
+            currentPlayer = 'X';
+            status.textContent = `${player1}'s turn (X)`;
+            homeButton.classList.add('hidden');
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('x-mark', 'o-mark');
+            });
+        }
+
+        cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+        restartButton.addEventListener('click', restartGame);
+        homeButton.addEventListener('click', () => window.location.href = 'index.html');
+    </script>
+</body>
+</html>
